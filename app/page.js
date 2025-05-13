@@ -338,7 +338,7 @@ export default function Home() {
             <a href="#faq" className="text-gray-400 hover:text-white transition">FAQ</a>
           </nav>
           <div className="flex space-x-4 items-center">
-            <a href="#login" className="text-gray-400 hover:text-white transition">Log in</a>
+            <a href="/create" className="text-gray-400 hover:text-white transition">Log in</a>
             <a href="/create" className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-full hover:from-purple-600 hover:to-blue-600 transition">Get Started</a>
           </div>
         </div>
