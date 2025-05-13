@@ -79,3 +79,4 @@ jobs:
           name: rendered-video
           path: "*.mp4"
           retention-days: 7
+
