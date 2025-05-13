@@ -812,10 +812,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="mt-8">
+                <Link href='/create'>
                 <button className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg shadow-teal-500/30 transform transition hover:-translate-y-1 duration-300 flex items-center">
                   <span>Start publishing today</span>
                   <ArrowRight size={18} className="ml-2" />
                 </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -1124,7 +1126,7 @@ export default function Home() {
               </div>
               
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#signup" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl hover:from-purple-600 hover:to-blue-600 transition font-medium">
+                <a href="/create" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl hover:from-purple-600 hover:to-blue-600 transition font-medium">
                   <span>Start Creating Free</span>
                   <ArrowRight size={18} className="ml-2" />
                 </a>
