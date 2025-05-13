@@ -1031,15 +1031,14 @@ const NavItem = ({ icon, label, active, onClick, href }) => {
                             >
                               Cancel
                             </Button>
+                            <Link href='/settings'>
                             <Button
                               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500"
-                              onClick={() => {
-                                setPlatform(null);
-                                setSelectedNav('settings');
-                              }}
+                             
                             >
                               Go to Settings
                             </Button>
+                            </Link>
                           </div>
                         </div>
                       )}

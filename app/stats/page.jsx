@@ -702,9 +702,11 @@ export default function YouTubeStats() {
                     <p className="text-gray-400 max-w-md mx-auto mb-8">
                       Connect your Google account to view your YouTube video statistics.
                     </p>
+                    <Link href='/settings'>
                     <Button className="py-2.5 px-5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl shadow-lg shadow-purple-900/20 hover:shadow-purple-900/40 transition-all">
                       Connect Google Account
                     </Button>
+                    </Link>
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-gray-900/50 border border-gray-800 rounded-2xl shadow-lg">

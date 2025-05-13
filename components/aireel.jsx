@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-   Sparkles, Music, FileText, Play, CheckCircle, ChevronRight, 
+   Sparkles, Music, FileText, CheckCircle, ChevronRight, 
   Plus,  Camera, Palette, Sparkle, Type, Zap, FileVideo,
   Clock,  Layers, LayoutGrid, ChevronLeft, 
 } from 'lucide-react';
@@ -102,7 +102,7 @@ export default function ImageToVideoReel() {
   const [subtitleStyle, setSubtitleStyle] = useState('none');
   const [subtitles, setSubtitles] = useState([]);
   const [isGeneratingSubtitles, setIsGeneratingSubtitles] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+ 
   const [message, setMessage] = useState('');
   const [videoDuration, setVideoDuration] = useState(0);
   const [subtitleMode, setSubtitleMode] = useState('audio');
@@ -363,9 +363,8 @@ export default function ImageToVideoReel() {
     }
   }, [subtitleMode, manualSubtitles]);
 
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
+  
+  
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -755,7 +754,7 @@ export default function ImageToVideoReel() {
         </div>
       </div>*/}
     </div>
-    {audioUrl && (
+   {/*} {audioUrl && (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -777,7 +776,7 @@ export default function ImageToVideoReel() {
           <span className="text-sm text-gray-400">{videoDuration.toFixed(1)}s</span>
         </div>
       </motion.div>
-    )}
+    )} */}
     <div className="flex justify-between mt-6">
       <motion.button
         whileHover={{ scale: 1.05 }}

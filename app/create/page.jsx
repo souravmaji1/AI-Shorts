@@ -15,6 +15,7 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig, Video as RemotionVideo }
 import { createClient } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import FeaturedVideo from '@/components/featured'
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -236,9 +237,6 @@ export default function VideoBulkPage() {
 
   
 
-
-  
-
   // Initialize FFmpeg
   useEffect(() => {
     const loadFFmpeg = async () => {
@@ -395,7 +393,7 @@ export default function VideoBulkPage() {
   
     try {
       const segmentDuration = 30;
-      const maxSegments = Math.min(4, Math.ceil(videoInfo.duration / segmentDuration));
+      const maxSegments = Math.min(1, Math.ceil(videoInfo.duration / segmentDuration));
       setMessage(`Splitting into ${maxSegments} segment(s) of up to 30 seconds each for Instagram Reels...`);
   
       const videoData = await fetchFile(uploadedVideo);
@@ -1832,96 +1830,18 @@ export default function VideoBulkPage() {
               </div>
             )}
 
-<div className="bg-gray-900/60 backdrop-blur-sm rounded-2xl border border-gray-800 p-8 transition-all animate-fadeIn relative overflow-hidden">
-  <div className="absolute inset-0 z-0 pointer-events-none">
-    <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-900/30 rounded-full filter blur-3xl animate-pulse"></div>
-    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-900/30 rounded-full filter blur-3xl animate-pulse"></div>
-  </div>
+<div className="bg-gray-900/60 z-[-1]  backdrop-blur-sm rounded-2xl border border-gray-800 p-8 transition-all animate-fadeIn relative overflow-hidden">
+  
   <div className="flex items-center justify-between mb-6 relative z-10">
     <h2 className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-blue-300">
       Featured AI Creations
     </h2>
-    <button className="text-sm text-purple-400 hover:text-purple-300 flex items-center z-50 relative">
-      Explore More <ChevronRight size={16} className="ml-1" />
-    </button>
+  
   </div>
 
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10"
-  >
-    {[
-      {
-        title: "Viral Dance Reel",
-        description: "AI-enhanced transitions and neon subtitles for a trending dance video.",
-        thumbnail: "/images/dance-reel.jpg",
-        platform: "Instagram Reels",
-        style: "Neon Glow",
-      },
-      {
-        title: "Travel Vlog Teaser",
-        description: "Cinematic cuts and minimal pop subtitles for a stunning travel clip.",
-        thumbnail: "/images/travel-vlog.jpg",
-        platform: "TikTok",
-        style: "Minimal Pop",
-      },
-      {
-        title: "Product Launch Ad",
-        description: "Bold Hormozi-style captions for a high-energy product reveal.",
-        thumbnail: "/images/product-ad.jpg",
-        platform: "YouTube Shorts",
-        style: "Hormozi",
-      },
-    ].map((creation, index) => (
-      <motion.div
-        key={index}
-        whileHover={{ scale: 1.03, y: -5 }}
-        className="relative bg-gray-900/50 rounded-xl overflow-hidden border border-gray-700 hover:border-purple-500/70 transition-all shadow-lg hover:shadow-2xl hover:shadow-purple-900/30 group"
-      >
-        <div className="relative aspect-video overflow-hidden">
-          <img
-            src={creation.thumbnail}
-            alt={creation.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/80"></div>
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="bg-purple-600/80 text-white py-2 px-4 rounded-lg flex items-center backdrop-blur-sm shadow-lg shadow-purple-900/50"
-            >
-              <Play size={18} className="mr-2" />
-              Preview
-            </motion.button>
-          </div>
-          <div className="absolute top-3 right-3 bg-gray-900/80 rounded-md px-2 py-1 text-xs text-gray-300 backdrop-blur-sm">
-            {creation.platform}
-          </div>
-        </div>
-        <div className="p-4">
-          <h4 className="font-medium text-white mb-1">{creation.title}</h4>
-          <p className="text-sm text-gray-400 mb-2 line-clamp-2">{creation.description}</p>
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span className="flex items-center">
-              <Sparkles size={14} className="mr-1 text-purple-400" />
-              {creation.style}
-            </span>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-purple-400 hover:text-purple-300 flex items-center"
-            >
-              Create Similar <ArrowRight size={14} className="ml-1" />
-            </motion.button>
-          </div>
-        </div>
-        <div className="absolute inset-0 border-2 border-purple-500/0 group-hover:border-purple-500/50 rounded-xl transition-all duration-300"></div>
-      </motion.div>
-    ))}
-  </motion.div>
+ <FeaturedVideo />
+
+
 </div>
 
 
