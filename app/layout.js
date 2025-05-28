@@ -14,8 +14,8 @@ const unbounded = Aclonica({
 });
 
 const siteConfig = {
-  name: "AISiteGen",
-  description: "AI-powered chat and analysis platform for seamless interaction and information processing",
+  name: "VideoSyncAI",
+  description: "AI Short video generator",
   keywords: ["AI", "chat", "analysis", "machine learning", "artificial intelligence"],
   authors: [{ name: " Team" }],
   creator: "",
