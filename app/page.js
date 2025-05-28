@@ -395,7 +395,7 @@ export default function Home() {
               loop 
               playsInline
               className="absolute inset-0 w-full h-full object-cover"
-              src="one.mp4"
+              src="https://fmkjdrdiifebucfpkbsz.supabase.co/storage/v1/object/public/avatars//Untitled%20design%20(4)%20(1).mp4"
             />
             
             {/* Stylish overlays */}
