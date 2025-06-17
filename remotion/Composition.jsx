@@ -4,93 +4,114 @@ import { Composition, AbsoluteFill, useVideoConfig, Video as RemotionVideo, Img,
 import SubtitleOverlay from '../components/SubtitleOverlay';
 
 // VideoComposition component for rendering video or image slideshow
-export const VideoComposition = ({
-  videoUrls,
-  images,
-  subtitles,
-  styleType,
-  duration,
-  imageDuration = 3, // Default 3 seconds per image
-  audioUrl,
-  audioVolume = 1, // Default volume
-}) => {
+export const VideoComposition = ({ images, audioUrl,subtitles, subtitleStyle, transitionType = 'crossfade' }) => {
+  const frameRate = 30;
+  const imageDuration = 3; // Duration per image in seconds
+  const transitionDuration = 0.5; // Duration of transition in seconds
+  const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  // Log props for debugging
-  console.log('VideoComposition props:', {
-    videoUrls,
-    images,
-    subtitles,
-    styleType,
-    duration,
-    imageDuration,
-    audioUrl,
-    audioVolume,
-    fps,
-  });
-
-  // Validate duration
-  const safeDuration = Number(duration) || 30; // Fallback to 30 seconds
-
   return (
     <AbsoluteFill style={{ backgroundColor: 'black' }}>
-      {/* Audio */}
-      {audioUrl && (
-        <Audio
-          src={audioUrl}
-          volume={audioVolume}
-          startFrom={0}
-          endAt={Math.ceil(safeDuration * fps)}
-          onError={(e) => console.error('Audio load error:', e)}
-        />
-      )}
+        {audioUrl && <Audio src={audioUrl} />}
+      {images.map((img, index) => {
+        const startFrame = index * imageDuration * frameRate;
+        const endFrame = startFrame + imageDuration * frameRate;
+        const transitionFrames = transitionDuration * frameRate;
 
-      {/* Video mode */}
-      {videoUrls && Array.isArray(videoUrls) && videoUrls.length > 0 && (
-        <>
-          {videoUrls.map((video, index) => (
-            <Sequence
-              key={index}
-              from={Math.floor((video.start || 0) * fps)}
-              durationInFrames={Math.floor(((video.end || safeDuration) - (video.start || 0)) * fps)}
-            >
-              <RemotionVideo
-                src={video.src || video}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                onError={(e) => console.error(`Remotion Video load error for ${video.src || video}:`, e)}
-              />
-            </Sequence>
-          ))}
-          <SubtitleOverlay subtitles={subtitles} styleType={styleType} />
-        </>
-      )}
+        let opacity = 1;
+        let transform = 'none';
+        let translateX = 0;
+        let scale = 1;
 
-      {/* Image slideshow mode */}
-      {(!videoUrls || videoUrls.length === 0) && images && images.length > 0 && (
-        <>
-          {images.map((img, index) => (
-            <Sequence
-              key={index}
-              from={index * imageDuration * fps}
-              durationInFrames={imageDuration * fps}
-            >
-              <Img
-                src={img}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </Sequence>
-          ))}
-          <SubtitleOverlay subtitles={subtitles} styleType={styleType} />
-        </>
-      )}
+        if (transitionType === 'crossfade') {
+          opacity = interpolate(
+            frame,
+            [
+              startFrame,
+              startFrame + transitionFrames,
+              endFrame - transitionFrames,
+              endFrame,
+            ],
+            [0, 1, 1, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+        } else if (transitionType === 'slide') {
+          translateX = interpolate(
+            frame,
+            [startFrame, startFrame + transitionFrames],
+            [100, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+          opacity = interpolate(
+            frame,
+            [endFrame - transitionFrames, endFrame],
+            [1, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+          transform = `translateX(${translateX}%)`;
+        } else if (transitionType === 'zoom') {
+          scale = interpolate(
+            frame,
+            [startFrame, startFrame + transitionFrames],
+            [1.2, 1],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+          opacity = interpolate(
+            frame,
+            [endFrame - transitionFrames, endFrame],
+            [1, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+          transform = `scale(${scale})`;
+        } else if (transitionType === 'fade-to-black') {
+          opacity = interpolate(
+            frame,
+            [
+              startFrame,
+              startFrame + transitionFrames / 2,
+              endFrame - transitionFrames / 2,
+              endFrame,
+            ],
+            [0, 1, 1, 0],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+          );
+        }
 
-      {/* Fallback if no videos or images */}
-      {(!videoUrls || videoUrls.length === 0) && (!images || images.length === 0) && (
-        <div style={{ width: '100%', height: '100%', backgroundColor: '#111' }} />
+        const zoomCycleDuration = 1 * frameRate;
+        const relativeFrame = frame - startFrame;
+        const zoomScale = interpolate(
+          relativeFrame % zoomCycleDuration,
+          [0, zoomCycleDuration / 2, zoomCycleDuration],
+          [1, 1.1, 1],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+        );
+
+        const finalTransform = transform === 'none' ? `scale(${zoomScale})` : `${transform} scale(${zoomScale})`;
+
+        return (
+          <Sequence
+            key={index}
+            from={startFrame}
+            durationInFrames={imageDuration * frameRate}
+          >
+            <Img
+              src={img}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                opacity,
+                transform: finalTransform,
+                transformOrigin: 'center center',
+              }}
+            />
+          </Sequence>
+        );
+      })}
+      {subtitles.length > 0 && (
+        <Sequence from={0} durationInFrames={Math.max(...subtitles.map(s => s.end * fps))}>
+          <SubtitleOverlay subtitles={subtitles} styleType={subtitleStyle} />
+        </Sequence>
       )}
     </AbsoluteFill>
   );
@@ -98,12 +119,11 @@ export const VideoComposition = ({
 
 // RemotionComposition component for composition setup
 export const RemotionComposition = ({
-  videoUrls,
-  audioUrl,
-  audioVolume,
   images,
+  audioUrl,
   subtitles,
   styleType,
+  transitionType,
   duration,
   imageDuration,
 }) => {
@@ -113,16 +133,15 @@ export const RemotionComposition = ({
 
   // Log props for debugging
   console.log('RemotionComposition props:', {
-    videoUrls,
-    audioUrl,
-    audioVolume,
     images,
+    audioUrl,
     subtitles,
     styleType,
+    transitionType,
     duration,
     safeDuration,
     durationInFrames,
-    durationType: typeof duration,
+    imageDuration,
   });
 
   // Validate durationInFrames
@@ -137,17 +156,14 @@ export const RemotionComposition = ({
       component={VideoComposition}
       durationInFrames={durationInFrames}
       fps={fps}
-      width={606}
-      height={1080}
+      width={360} // Adjusted to match Main component's player (9:16 aspect ratio)
+      height={640}
       defaultProps={{
-        videoUrls: Array.isArray(videoUrls) ? videoUrls : [],
         images: Array.isArray(images) ? images : [],
+        audioUrl: audioUrl || '',
         subtitles: Array.isArray(subtitles) ? subtitles : [],
         styleType: styleType || 'none',
-        duration: safeDuration,
-        imageDuration: Number(imageDuration) || 3,
-        audioUrl: audioUrl || '',
-        audioVolume: Number(audioVolume) || 1,
+        transitionType: transitionType || 'crossfade',
       }}
     />
   );
