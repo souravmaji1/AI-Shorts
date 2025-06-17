@@ -1,3 +1,4 @@
+
 name: Render Remotion Video
 
 on:
@@ -25,47 +26,34 @@ jobs:
 
       - name: Render Video with Remotion
         env:
-          VIDEO_URLS: ${{ toJson(github.event.client_payload.videoUrls) }}
-          AUDIO_URL: ${{ github.event.client_payload.audioUrl }}
           IMAGES: ${{ toJson(github.event.client_payload.images) }}
-          DURATION: ${{ github.event.client_payload.duration }}
-          IMAGE_DURATION: ${{ github.event.client_payload.imageDuration }}
+          AUDIO_URL: ${{ github.event.client_payload.audioUrl }}
           SUBTITLES: ${{ toJson(github.event.client_payload.subtitles) }}
           SUBTITLE_STYLE: ${{ github.event.client_payload.styleType }}
-          AUDIO_VOLUME: ${{ github.event.client_payload.audioVolume }}
+          TRANSITION_TYPE: ${{ github.event.client_payload.transitionType }}
         run: |
           echo "Rendering video with props:"
-          echo "Video URLs: $VIDEO_URLS"
-          echo "Audio URL: $AUDIO_URL"
-          echo "Duration: $DURATION"
-          echo "Audio Volume: $AUDIO_VOLUME"
           echo "Images: $IMAGES"
+          echo "Audio URL: $AUDIO_URL"
           echo "Subtitles: $SUBTITLES"
           echo "Subtitle Style: $SUBTITLE_STYLE"
+          echo "Transition Type: $TRANSITION_TYPE"
+     
 
           # Build props JSON
           PROPS=$(jq -n \
-            --argjson videoUrls "$VIDEO_URLS" \
-            --arg audioUrl "$AUDIO_URL" \
-            --argjson audioVolume "$AUDIO_VOLUME" \
             --argjson images "$IMAGES" \
+            --arg audioUrl "$AUDIO_URL" \
             --argjson subtitles "$SUBTITLES" \
             --arg styleType "$SUBTITLE_STYLE" \
-            --argjson duration "$DURATION" \
+            --arg transitionType "$TRANSITION_TYPE" \
             '{
-              videoUrls: $videoUrls,
-              audioUrl: $audioUrl,
-              audioVolume: $audioVolume,
               images: $images,
+              audioUrl: $audioUrl,
               subtitles: $subtitles,
               styleType: $styleType,
-              duration: $duration
+              transitionType: $transitionType
             }')
-
-          # Only include imageDuration if it exists
-          if [ ! -z "$IMAGE_DURATION" ]; then
-            PROPS=$(echo $PROPS | jq --argjson imageDuration "$IMAGE_DURATION" '. + {imageDuration: $imageDuration}')
-          fi
 
           echo "Constructed PROPS: $PROPS"
 
